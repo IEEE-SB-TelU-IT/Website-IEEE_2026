@@ -1,35 +1,50 @@
 import React from 'react';
+import { Instagram, Linkedin, Music2 } from 'lucide-react';
 import logo from '../assets/image/logo.png';
 
 const Footer = () => {
   return (
-    <footer className="bg-ocean-800 relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pt-16 pb-8 mt-20 text-white">
-      <div className="max-w-7xl mx-auto flex flex-col items-center">
+    <footer className="bg-black py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto bg-[#00629B] rounded-[40px] px-10 md:px-16 pt-10 pb-10 text-white relative overflow-hidden shadow-2xl">
 
-        <div className="text-center mb-10 max-w-2xl">
-          <h2 className="text-2xl font-bold mb-4">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold max-w-3xl mx-auto leading-tight">
             Reach us, If you want to join or know more about IEEE Telkom University Student Branch.
           </h2>
         </div>
 
-        <div className="w-full flex-col md:flex-row flex justify-between items-start md:items-end gap-10 border-t border-ocean-700/50 pt-10">
-          <div className="text-sm text-blue-100 flex-1">
-            <p className="mb-1"><strong>www.ieee.org</strong></p>
-            <p className="mb-1">Jl. Telekomunikasi.</p>
-            <p className="mb-1">1, Terusan Buahbatu.</p>
-            <p>Bandung 40257 Jawa Barat, Indonesia.</p>
-          </div>
+        <div className="w-full h-[1px] bg-white/20 mb-8"></div>
 
-          <div className="flex-1 flex justify-center items-center">
-            <img src={logo} alt="IEEE Logo" className="h-10 object-contain opacity-90" />
-          </div>
-
-          <div className="flex-1 flex justify-end items-center gap-6 text-sm text-blue-200">
-            <a href="#" className="hover:text-white transition-colors">© 2024 IEEE IT Student Branch. All rights reserved.</a>
-            <div className="flex gap-3">
-              <a href="#" className="w-8 h-8 rounded-full bg-ocean-900/50 flex items-center justify-center hover:bg-ocean-700">In</a>
-              <a href="#" className="w-8 h-8 rounded-full bg-ocean-900/50 flex items-center justify-center hover:bg-ocean-700">Ig</a>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
+          <div>
+            <p className="text-sm font-medium mb-1 opacity-80 uppercase tracking-wider">Where to find us</p>
+            <div className="text-sm leading-relaxed space-y-0.5 opacity-90 font-light">
+              <p>Jl. Telekomunikasi,</p>
+              <p>Jl. Terusan Buah Batu No.01,</p>
+              <p>Sukapura, Dayeuhkolot, Bandung, Jawa Barat 40257</p>
             </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center">
+            <img src={logo} alt="IEEE Logo" className="h-8 object-contain brightness-0 invert" />
+          </div>
+
+          <div className="text-xs md:text-sm opacity-70 text-center font-light">
+            © 2024 IEEE SB Telkom University · All rights reserved.
+          </div>
+
+          <div className="flex items-center gap-5">
+            <a href="#" className="hover:opacity-100 opacity-80 transition-opacity">
+              <Instagram size={20} />
+            </a>
+            <a href="#" className="hover:opacity-100 opacity-80 transition-opacity">
+              <Linkedin size={20} />
+            </a>
+            <a href="#" className="hover:opacity-100 opacity-80 transition-opacity">
+              <Music2 size={20} />
+            </a>
           </div>
         </div>
       </div>
