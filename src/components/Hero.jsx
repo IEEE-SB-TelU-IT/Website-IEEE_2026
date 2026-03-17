@@ -4,13 +4,15 @@ import BgHero from '../assets/image/bg-hero.png';
 const Hero = () => {
   return (
     <section className="pt-20 sm:pt-24 md:pt-32 pb-10 md:pb-16 flex flex-col items-center text-center relative w-full">
+      <div className="absolute top-[-1rem] left-1/2 -translate-x-1/2 w-[100vw] h-[calc(100%+1rem)] bg-black pointer-events-none -z-20"></div>
+
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[160vw] sm:w-[800px] md:w-[900px] lg:w-[1100px] aspect-square pointer-events-none -z-10 flex justify-center items-center">
         <img src={BgHero} alt="Hero Background" className="w-full h-full object-contain mix-blend-screen opacity-100" />
       </div>
       <div className="border border-white/20 bg-[#00172d]/50 backdrop-blur-md text-[10px] sm:text-xs md:text-sm text-gray-200 py-1.5 px-5 rounded-full mb-4 sm:mb-6 shadow-lg mt-8 lg:mt-12 relative z-10">
         Welcome to IEEE Tel-U
       </div>
-      <h1 className="text-2xl sm:text-4xl md:text-[2.8rem] font-bold tracking-tight mb-6 sm:mb-8 leading-[1.1] px-4 w-full max-w-3xl">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight mb-6 sm:mb-8 leading-[1.1] px-4 w-full max-w-3xl">
         <span className="text-white">Foster Technological</span>
         <br />
         <span className="text-white">Innovation and Excellence</span>
