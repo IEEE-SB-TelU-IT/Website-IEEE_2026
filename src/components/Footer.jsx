@@ -17,8 +17,8 @@ const Footer = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
           <div>
-            <p className="text-sm font-medium mb-1 opacity-80 uppercase tracking-wider">Where to find us</p>
-            <div className="text-sm leading-relaxed space-y-0.5 opacity-90 font-light">
+            <p className="text-sm font-bold mb-1 opacity-100 tracking-wider">Where to find us</p>
+            <div className="text-sm leading-relaxed space-y-0.5 opacity-100 font-bold">
               <p>Jl. Telekomunikasi,</p>
               <p>Jl. Terusan Buah Batu No.01,</p>
               <p>Sukapura, Dayeuhkolot, Bandung, Jawa Barat 40257</p>
@@ -31,7 +31,7 @@ const Footer = () => {
             <img src={logo} alt="IEEE Logo" className="h-8 object-contain brightness-0 invert" />
           </div>
 
-          <div className="text-xs md:text-sm opacity-70 text-center font-light">
+          <div className="text-sm md:text-sm opacity-100 text-center font-bold">
             © 2024 IEEE SB Telkom University · All rights reserved.
           </div>
 
