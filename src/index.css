@@ -28,6 +28,6 @@
   }
 
   body {
-    @apply font-sans bg-bg-dark text-white m-0 p-0 antialiased overflow-x-hidden;
+    @apply font-sans bg-white text-black m-0 p-0 antialiased overflow-x-hidden;
   }
 }
