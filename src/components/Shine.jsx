@@ -2,10 +2,14 @@ import React from 'react';
 
 const Shine = () => {
   return (
-    <section className="bg-white py-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 text-center pb-32">
-      <h2 className="text-5xl md:text-7xl font-black text-[#00629B] tracking-tighter max-w-4xl mx-auto leading-[1.1]">
-        Shine in the digital <br /> world
-      </h2>
+    <section className="bg-white w-full py-16 sm:py-20 pb-20 sm:pb-32 text-center">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-4xl sm:text-5xl md:text-7xl font-black text-[#00629B] tracking-tighter leading-[1.05]">
+          Shine in the digital{' '}
+          <br className="hidden sm:block" />
+          world
+        </h2>
+      </div>
     </section>
   );
 };

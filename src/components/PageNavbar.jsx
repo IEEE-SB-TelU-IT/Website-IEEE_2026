@@ -9,7 +9,7 @@ const PageNavbar = ({ showSearch = false }) => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'News', path: '/#news' },
-    { name: 'Departments', path: '/#departments' },
+    { name: 'Departments', path: '/departments' },
     { name: 'Achievement', path: '/achievements' },
     { name: 'Event', path: '/events' },
   ];

@@ -1,0 +1,129 @@
+================================================================================
+CATATAN PERBAIKAN WEBSITE IEEE 2026 (Vite + React + Tailwind)
+Tanggal: 19 April 2026
+Project: d:\IEEE SB TELYU\Frontend\Website-IEEE_2026
+================================================================================
+
+FILE YANG DIPERBAIKI:
+  1. src/pages/Home.jsx
+  2. src/components/Navbar.jsx
+  3. src/components/Hero.jsx
+  4. src/components/News.jsx
+  5. src/components/Departments.jsx
+  6. src/components/StudentBranch.jsx
+  7. src/components/Grow.jsx
+  8. src/components/Community.jsx
+  9. src/components/Shine.jsx
+  10. src/components/Achievements.jsx
+  11. src/components/RecentActivities.jsx
+  12. src/components/Footer.jsx
+
+================================================================================
+A. PERBAIKAN NAVBAR
+================================================================================
+
+1. [FEATURE] Hamburger Menu Mobile
+   - Sebelumnya: Nav links HILANG di mobile (hidden md:flex tanpa fallback)
+   - Perbaikan: Tambah tombol hamburger animasi (3 garis) di mobile
+   - Dropdown menu animasi smooth (max-h + opacity transition)
+   - Menu otomatis tutup saat link diklik
+
+2. [IMPROVEMENT] Scroll-aware Navbar
+   - Sebelumnya: background navbar tetap transparan saat scroll
+   - Sekarang: Saat scroll > 20px, navbar gelap (bg-[#001220]/80)
+
+3. [IMPROVEMENT] Tambah link Events di navbar
+
+================================================================================
+B. PERBAIKAN HERO SECTION
+================================================================================
+
+1. [RESPONSIVE] Heading terlalu kecil di mobile & desktop
+   - Sebelumnya: text-xl sm:text-2xl md:text-3xl
+   - Sekarang: text-2xl sm:text-4xl md:text-5xl lg:text-6xl
+
+2. [RESPONSIVE] Stats Badges tidak rata di mobile
+   - Sebelumnya: flex-wrap
+   - Sekarang: grid grid-cols-2 di mobile, flex-wrap di sm ke atas
+
+================================================================================
+C. PERBAIKAN SECTIONS
+================================================================================
+
+1. [FIX] Sections tanpa padding horizontal
+   - Konten menyentuh tepi layar di mobile
+   - Perbaikan: px-4 sm:px-6 lg:px-8 + max-w-7xl mx-auto di tiap section
+
+2. [RESPONSIVE] Grid breakpoint tablet ditambah
+   - News & Achievements: sm:grid-cols-2
+   - Departments: sm:grid-cols-2
+   - RecentActivities: sm:grid-cols-2 md:grid-cols-3
+
+================================================================================
+D. PERBAIKAN GROW & SHINE
+================================================================================
+
+1. [FIX] Negative Margin overflow dihapus
+   - -mx-4 sm:-mx-6 lg:-mx-8 diganti w-full + inner max-w container
+
+================================================================================
+E. PERBAIKAN FOOTER
+================================================================================
+
+1. [RESPONSIVE] Copyright pindah ke paling bawah di mobile
+2. [RESPONSIVE] Border radius lebih kecil di mobile
+3. [RESPONSIVE] Padding disesuaikan
+
+================================================================================
+F. HOME.JSX - REFACTOR
+================================================================================
+
+1. [REFACTOR] Hapus outer max-w-7xl wrapper
+   - Sebelumnya memblokir Grow/Community dari tampil full-width
+   - Tiap section sekarang urus container-nya sendiri
+
+================================================================================
+G. PROGRESS FRONTEND (Oleh Zidane dan Jannah)
+================================================================================
+
+1. [RESPONSIVE] Optimalisasi Tampilan Desktop & Mobile
+   - Perbaikan layout dan *breakpoints* di berbagai komponen (termasuk PageNavbar) agar tidak ada elemen yang tumpang tindih.
+   - Peningkatan transisi smooth di semua layar untuk memastikan keterbacaan yang nyaman di HP maupun Laptop.
+
+2. [FEATURE] Implementasi Animasi Latar WebGL Orb
+   - Membuat komponen `Orb.jsx` dan `Orb.css` (berbasis library `ogl`) yang merender animasi bola energi WebGL interaktif penuh.
+   - Mengunci kombinasi warna ke palet Ungu-Biru tua agar estetik dan khas warna tema IEEE, menghilangkan warna kuning/merah.
+   - Memperlebar *canvas* orb hingga mencakup *full-screen height* di desktop (`min-h-screen`) dan memastikannya responsif di mobile lalu diintegrasikan sebagai latar *Hero* UI.
+
+3. [FEATURE] Pembuatan Halaman Departments Baru (`Departments.jsx`)
+   - Merombak total `Departments.jsx` sesuai dengan desain referensi dengan animasi yang modern dan mulus.
+   - Memasukkan visual pil/chip metrik pada hero section ("9 Years", "105 Officers").
+   - Merapikan sesi *Vision* dan *Mission* bergaya "Split View" (satu putih, satu biru navy gelap), beserta tambahan teks raksasa beranimasi *breathing watermark*.
+   - Membuat Tab section statis yang dinamis terbuat dari efek *glow* dari *accent color* tiap departemennya.
+   - Melengkapi komponen `Goals` menggunakan SVG *custom decoration graph lines*.
+   - Mengenkapsulasi dan menghidupkan hirarki tim direksi (Our Directors Team) menjadi satu kesatuan diagram hierarki di mana **setiap kotak profil tersambung otomatis menggunakan <svg> rendering line dari DOM node aktual**, memberikan hasil diagram garis akurat tanpa teputus.
+   - Meng-handle perbaikan bug rendering infinite berulang yang sebelumnya sempat membuat laman tertutup.
+
+================================================================================
+
+================================================================================
+H. TO-DO LIST SELANJUTNYA (FRONTEND)
+================================================================================
+
+1. [DATA & CONTENT INTEGRATION] Menerapkan Data Asli
+   - Saat ini section 'Our Directors Team' di \`Departments.jsx\`, beserta deskripsi 'Nama' dan 'Posisi', masih menggunakan data statis dummy.
+   - Ganti *placeholder text* ini dengan JSON/API Data sungguhan saat backend/struktur siap.
+   - Sama halnya dengan halaman \`RecentActivities\` & komponen \`News.jsx\`; sesuaikan datanya.
+
+2. [ASSET REPLACEMENT] Pasang Aset Foto Resmi
+   - Lakukan penggantian avatar placeholder dengan foto pengurus resmi.
+   - Optimalkan format foto-foto berat menjadi \`.webp\` agar performa web tetap instan.
+
+3. [ROUTING & NAVIGATION] Audit Internal Navigation
+   - Lakukan pengecekan keseluruhan Link (Navbar & Footer) untuk memastikan tidak ada URL *broken* apalagi pasca perkuatan arsitektur Departments.
+
+4. [PERFORMANCE & SEO TWEAK] (Opsional)
+   - Terapkan *Lazy Loading* pada komponen berat seperti Animasi WebGL \`Orb\` jika berefek signifikan pada \`First Contentful Paint\`.
+   - Setup meta Titles, komplit SEO description, beserta struktur index.html (favicon).
+
+================================================================================

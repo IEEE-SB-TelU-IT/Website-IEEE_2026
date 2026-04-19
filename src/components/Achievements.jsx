@@ -6,15 +6,15 @@ const Achievements = () => {
   const cards = [1, 2, 3, 4];
 
   return (
-    <section id="achievements" className="py-20 flex flex-col items-center">
-      <h2 className="text-3xl font-bold mb-3 text-white">Achievements</h2>
-      <p className="text-gray-300 text-sm mb-12 text-center max-w-lg">
+    <section id="achievements" className="py-14 sm:py-20 flex flex-col items-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-white">Achievements</h2>
+      <p className="text-gray-300 text-sm mb-10 sm:mb-12 text-center max-w-lg">
         Showcasing the achievements of our officers in different areas of excellence.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full mb-8 sm:mb-10">
         {cards.map((item) => (
-          <div key={item} className="bg-ocean-900/40 rounded-xl overflow-hidden border border-ocean-700/30 flex flex-col">
+          <div key={item} className="bg-ocean-900/40 rounded-xl overflow-hidden border border-ocean-700/30 flex flex-col hover:border-ocean-700/60 transition-colors">
             <div className="p-3">
               <div className="relative rounded-lg overflow-hidden pb-[60%] bg-blue-900/30">
                 <img
@@ -24,7 +24,7 @@ const Achievements = () => {
                 />
               </div>
             </div>
-            <div className="px-5 pb-5 pt-2 flex flex-col flex-grow">
+            <div className="px-4 sm:px-5 pb-5 pt-2 flex flex-col flex-grow">
               <span className="text-xs text-blue-2 mb-1">2024</span>
               <h3 className="text-sm font-semibold text-white mb-2 leading-snug">
                 Artificial Intelligence on Human Daily Life
@@ -38,7 +38,7 @@ const Achievements = () => {
       </div>
 
       <Link to="/achievements">
-        <button className="bg-ocean-800 hover:bg-ocean-700 text-white font-medium py-2 px-8 rounded-full text-sm transition-all duration-300">
+        <button className="bg-ocean-800 hover:bg-ocean-700 text-white font-medium py-2.5 px-8 rounded-full text-sm transition-all duration-300">
           See More
         </button>
       </Link>

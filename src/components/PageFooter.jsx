@@ -21,7 +21,7 @@ const PageFooter = ({ showLocation = false }) => {
                 <Globe className="w-4 h-4 text-gray-300" />
               </a>
               <a href="#" className="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-ocean-700 flex items-center justify-center transition">
-                <text className="font-bold text-sm text-gray-300">@</text>
+                <span className="font-bold text-sm text-gray-300">@</span>
               </a>
               <a href="#" className="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-ocean-700 flex items-center justify-center transition">
                 <Share2 className="w-4 h-4 text-gray-300" />

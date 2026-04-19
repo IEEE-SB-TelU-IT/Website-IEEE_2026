@@ -11,18 +11,18 @@ const Departments = () => {
   ];
 
   return (
-    <section id="departments" className="py-20 flex flex-col items-center">
-      <h2 className="text-3xl font-bold mb-4 text-white">Departments</h2>
-      <p className="text-gray-300 text-sm mb-16 text-center max-w-2xl">
+    <section id="departments" className="py-14 sm:py-20 flex flex-col items-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-white">Departments</h2>
+      <p className="text-gray-300 text-sm mb-10 sm:mb-16 text-center max-w-2xl">
         A list of the departments that are part of IEEE SB Telkom University, each representing different roles and responsibilities in the organization
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
         {depts.map((dept, idx) => (
           <div key={idx} className="relative group p-[1px] bg-gradient-to-br from-blue-3/50 to-ocean-900/10 rounded-xl overflow-hidden">
-            <div className="h-full bg-[#001220] p-8 rounded-xl flex flex-col relative z-10 transition-colors group-hover:bg-[#001a2e]">
-              <h3 className="text-lg font-bold text-blue-1 mb-3">{dept.title}</h3>
-              <p className="text-xs text-gray-400 leading-relaxed mb-8 flex-grow">
+            <div className="h-full bg-[#001220] p-6 sm:p-8 rounded-xl flex flex-col relative z-10 transition-colors group-hover:bg-[#001a2e]">
+              <h3 className="text-base sm:text-lg font-bold text-blue-1 mb-3">{dept.title}</h3>
+              <p className="text-xs text-gray-400 leading-relaxed mb-6 sm:mb-8 flex-grow">
                 {dept.desc}
               </p>
 
@@ -30,12 +30,12 @@ const Departments = () => {
                 See More <span className="ml-1">→</span>
               </div>
 
-              <div className="absolute right-0 bottom-0 opacity-10 text-6xl transform translate-x-1/4 translate-y-1/4">
+              <div className="absolute right-0 bottom-0 opacity-10 text-5xl sm:text-6xl transform translate-x-1/4 translate-y-1/4">
                 ⚙️
               </div>
             </div>
 
-            <div className="absolute top-0 right-0 w-8 h-8 bg-black z-20" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }}></div>
+            <div className="absolute top-0 right-0 w-8 h-8 bg-black z-20" style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }} />
           </div>
         ))}
       </div>
