@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Grow = () => {
   return (
@@ -20,9 +21,11 @@ const Grow = () => {
               personal and professional development.
             </p>
 
-            <button className="bg-[#00629B] hover:bg-[#005282] text-white font-semibold py-2.5 sm:py-3 px-8 sm:px-10 rounded-full shadow-[0_10px_20px_rgba(0,98,155,0.3)] transition-all duration-300 text-sm sm:text-base">
-              See More
-            </button>
+            <Link to="/departments">
+              <button className="bg-[#00629B] hover:bg-[#005282] text-white font-semibold py-2.5 sm:py-3 px-8 sm:px-10 rounded-full shadow-[0_10px_20px_rgba(0,98,155,0.3)] transition-all duration-300 text-sm sm:text-base">
+                See More
+              </button>
+            </Link>
           </div>
 
           {/* Right Column: Stat Card */}
