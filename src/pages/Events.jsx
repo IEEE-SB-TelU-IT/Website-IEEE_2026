@@ -1,116 +1,416 @@
-import React from 'react';
-import PageNavbar from '../components/PageNavbar';
-import PageFooter from '../components/PageFooter';
-import { Calendar, MapPin } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { MapPin, Calendar, ArrowRight, ChevronDown, SlidersHorizontal, Clock, Users } from 'lucide-react';
+import logo from '../assets/image/logo.png';
+import contoh1 from '../assets/image/contoh1.png';
+import contoh2 from '../assets/image/contoh2.png';
 
-const Events = () => {
-  const categories = ['All Events', 'Workshops', 'Seminars', 'Competitions'];
-
-  const events = [
-    { type: 'WORKSHOP', title: 'AI Workshop 2024', desc: 'Master the fundamentals of Neural Networks and Deep Learning through hands-on practice sessions.', date: 'Jan 20, 2024', loc: 'GKJ Hall', img: 'contoh1.png' },
-    { type: 'COMPETITION', title: 'National Robot Battle', desc: 'The biggest robotics challenge at Telkom University. Bring your bots to the arena and win amazing prizes.', date: 'Feb 05, 2024', loc: 'Sport Center', img: 'contoh2.png' },
-    { type: 'SEMINAR', title: 'Cybersecurity Insider', desc: 'Learn from industry experts about the latest trends in network security and ethical hacking.', date: 'Feb 12, 2024', loc: 'Online (Zoom)', img: 'contoh1.png' },
-    { type: 'WORKSHOP', title: 'Web Dev Bootcamp', desc: 'A 3-day intensive bootcamp to learn modern full-stack development using React and Node.js.', date: 'Mar 01, 2024', loc: 'Informatics Lab', img: 'contoh2.png' },
-    { type: 'COMPETITION', title: 'IoT Innovation Hack', desc: 'Solve real-world problems using Internet of Things. 24 hours to build, 5 minutes to pitch.', date: 'Mar 15, 2024', loc: 'Creative Center', img: 'contoh1.png' },
-    { type: 'SEMINAR', title: 'Data Science Career', desc: 'Discover the career paths available in data science and how to build a killer portfolio.', date: 'Apr 02, 2024', loc: 'Multimedia Room', img: 'contoh2.png' },
-  ];
+/* ─────────────────────────────────────────────────────────
+   NAVBAR — 3 links only: About Us | News | Achievements
+   ───────────────────────────────────────────────────────── */
+const EventNavbar = () => {
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="w-full min-h-screen bg-[#0f172a] text-white font-sans relative flex flex-col">
-      <PageNavbar showSearch={true} />
+    <div
+      className="w-full sticky top-0 z-50"
+      style={{ background: '#0a1628', borderBottom: '1px solid rgba(255,255,255,0.07)' }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-10 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+          <img src={logo} alt="IEEE" className="h-7 object-contain" />
+        </Link>
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
-
-        <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-2 h-2 rounded-full bg-ocean-500"></span>
-            <span className="text-xs font-bold tracking-widest text-ocean-400 uppercase">Happening Now</span>
-          </div>
-          <h1 className="text-5xl font-extrabold mb-6 tracking-tight">
-            Events & <span className="text-ocean-600">Workshops</span>
-          </h1>
-          <p className="text-gray-400 max-w-2xl leading-relaxed text-sm md:text-base">
-            Empowering students through technical excellence. Join our upcoming sessions to enhance your skills and network with industry leaders at Telkom University.
-          </p>
+        {/* Desktop links */}
+        <div className="hidden md:flex items-center gap-10 text-sm font-medium">
+          <Link to="/#about"      className="text-gray-300 hover:text-white transition-colors">About Us</Link>
+          <Link to="/news"        className="text-white font-semibold">News</Link>
+          <Link to="/achievements" className="text-gray-300 hover:text-white transition-colors">Achievements</Link>
         </div>
 
-        <div className="flex flex-wrap gap-3 mb-12">
-          {categories.map((cat, idx) => (
-            <button
-              key={cat}
-              className={`py-2 px-6 rounded-full text-sm font-medium flex items-center gap-2 transition-all ${idx === 0
-                  ? 'bg-ocean-700 text-white'
-                  : 'bg-[#1e293b] text-gray-300 hover:bg-[#2a3a53]'
-                }`}
-            >
-              {idx === 1 && <span className="text-xl">📺</span>}
-              {idx === 2 && <span className="text-xl">👥</span>}
-              {idx === 3 && <span className="text-xl">🏆</span>}
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-          {events.map((ev, i) => (
-            <div key={i} className="bg-[#1e293b]/60 rounded-2xl overflow-hidden border border-slate-700 hover:border-ocean-500/50 transition-all group flex flex-col">
-              <div className="relative h-48 bg-slate-800 overflow-hidden">
-                <div className="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border border-white/10">
-                  {ev.type}
-                </div>
-                <img
-                  src={`/src/assets/image/${ev.img}`}
-                  alt={ev.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60 mix-blend-luminosity hover:mix-blend-normal"
-                />
-              </div>
-
-              <div className="p-6 flex-1 flex flex-col">
-                <h3 className="text-xl font-bold mb-3">{ev.title}</h3>
-                <p className="text-sm text-gray-400 mb-6 flex-1 leading-relaxed line-clamp-3">
-                  {ev.desc}
-                </p>
-
-                <div className="flex items-center gap-4 text-xs text-gray-400 mb-6">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-gray-500" />
-                    {ev.date}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-gray-500" />
-                    {ev.loc}
-                  </div>
-                </div>
-
-                <button className="w-full py-2.5 rounded-full bg-ocean-800 hover:bg-ocean-700 text-white font-medium transition-colors text-sm flex items-center justify-center gap-2">
-                  {ev.type === 'COMPETITION' ? 'Register Team' : (ev.type === 'SEMINAR' ? 'Secure Spot' : 'Join Now')}
-                  <span className="text-lg leading-none">→</span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-slate-700/50 rounded-3xl p-10 flex flex-col md:flex-row items-center justify-between gap-8 mb-10 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-ocean-600/10 rounded-full blur-[80px] pointer-events-none"></div>
-
-          <div className="max-w-xl relative z-10">
-            <h2 className="text-3xl font-bold mb-4">Become part of the global technical community</h2>
-            <p className="text-gray-400 leading-relaxed text-sm">
-              Stay updated with the latest technological trends, access exclusive resources, and join a network of passionate engineers.
-            </p>
-          </div>
-
-          <button className="bg-ocean-700 hover:bg-ocean-600 px-8 py-3 rounded-full font-medium whitespace-nowrap transition-colors relative z-10 shadow-[0_0_20px_rgba(3,150,199,0.3)]">
-            Join Our Branch
+        {/* Membership */}
+        <div className="hidden md:flex">
+          <button
+            className="text-white text-sm font-semibold py-2 px-6 rounded-full transition-all duration-300 border border-white/10"
+            style={{ background: '#00629B', boxShadow: '0 0 18px rgba(0,98,155,0.4)' }}
+          >
+            Membership
           </button>
         </div>
 
-      </main>
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden text-white p-1"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle menu"
+        >
+          <div className="w-5 flex flex-col gap-1">
+            <span className={`block h-0.5 w-full bg-white rounded transition-all ${mobileOpen ? 'rotate-45 translate-y-1.5' : ''}`}/>
+            <span className={`block h-0.5 w-full bg-white rounded transition-all ${mobileOpen ? 'opacity-0' : ''}`}/>
+            <span className={`block h-0.5 w-full bg-white rounded transition-all ${mobileOpen ? '-rotate-45 -translate-y-1.5' : ''}`}/>
+          </div>
+        </button>
+      </div>
 
-      <PageFooter showLocation={false} />
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="md:hidden px-4 pb-4 flex flex-col gap-2" style={{ background: '#0a1628' }}>
+          <Link to="/#about"       onClick={() => setMobileOpen(false)} className="py-2.5 px-4 rounded-lg text-sm text-gray-300 hover:text-white hover:bg-white/5">About Us</Link>
+          <Link to="/news"         onClick={() => setMobileOpen(false)} className="py-2.5 px-4 rounded-lg text-sm text-white font-semibold bg-white/5">News</Link>
+          <Link to="/achievements" onClick={() => setMobileOpen(false)} className="py-2.5 px-4 rounded-lg text-sm text-gray-300 hover:text-white hover:bg-white/5">Achievements</Link>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Events;
+/* ─────────────────────────────────────────────────────────
+   DATA
+   ───────────────────────────────────────────────────────── */
+const events = [
+  {
+    id: 1,
+    status: 'OPEN', statusColor: '#22c55e',
+    tags: ['Tech', 'Hands-on'],
+    location: 'LAB MULTIMEDIA',
+    title: 'Cybersecurity Essentials 101',
+    desc: 'Learn the fundamentals of penetration testing and ethical hacking from industry experts.',
+    avatars: 3, extra: 12,
+    action: 'Join Now', actionType: 'link',
+    img: contoh1,
+    filter: 'Workshops',
+  },
+  {
+    id: 2,
+    status: 'FULL', statusColor: '#ef4444',
+    tags: ['Seminar'],
+    location: 'VIRTUAL VIA ZOOM',
+    title: 'Cloud Architecture Summit',
+    desc: 'A deep dive into serverless architectures and distributed systems with AWS experts.',
+    registered: '250+ Registered',
+    action: 'Waitlist', actionType: 'button',
+    img: contoh2,
+    filter: 'Seminars',
+  },
+  {
+    id: 3,
+    status: 'OPEN', statusColor: '#22c55e',
+    tags: ['Competition'],
+    location: 'MAIN AUDITORIUM',
+    title: 'IoT Innovation Challenge',
+    desc: 'Present your innovative IoT solutions and win prizes up to Rp 10.000.000!',
+    avatars: 3, extra: 45,
+    action: 'Join Now', actionType: 'link',
+    img: contoh1,
+    filter: 'Competitions',
+  },
+  {
+    id: 4,
+    status: 'OPEN', statusColor: '#22c55e',
+    tags: [],
+    location: 'GKU BUILDING',
+    title: 'Python for Data Science',
+    desc: 'A beginner-friendly workshop focusing on Pandas, Numpy and Matplotlib for data visualization.',
+    timeLabel: 'Starts in 5 days',
+    action: 'Join Now', actionType: 'link',
+    img: contoh2,
+    filter: 'Workshops',
+  },
+];
+
+const FILTERS = ['All Events', 'Workshops', 'Seminars', 'Competitions', 'Hackathons'];
+
+/* ─────────────────────────────────────────────────────────
+   EVENT CARD
+   ───────────────────────────────────────────────────────── */
+const EventCard = ({ ev }) => (
+  <div
+    className="rounded-2xl overflow-hidden flex flex-col group transition-all duration-300 hover:-translate-y-0.5"
+    style={{
+      background: '#0d1e30',
+      border: '1px solid #1a2d45',
+    }}
+  >
+    {/* Image */}
+    <div className="relative overflow-hidden" style={{ height: '180px' }}>
+      <span
+        className="absolute top-3 right-3 z-10 text-white text-[10px] font-bold px-2.5 py-1 rounded-full"
+        style={{ background: ev.statusColor }}
+      >
+        {ev.status}
+      </span>
+      {ev.tags.length > 0 && (
+        <div className="absolute bottom-3 left-3 z-10 flex gap-2">
+          {ev.tags.map((t) => (
+            <span
+              key={t}
+              className="text-white text-[10px] font-medium px-2 py-0.5 rounded"
+              style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      )}
+      <img
+        src={ev.img}
+        alt={ev.title}
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        style={{ filter: 'brightness(0.75) saturate(0.7)' }}
+      />
+    </div>
+
+    {/* Body */}
+    <div className="p-5 flex flex-col flex-1">
+      {/* Location */}
+      <div className="flex items-center gap-1.5 mb-2.5">
+        <MapPin style={{ width: 11, height: 11, color: '#00B3DC' }} />
+        <span
+          className="font-bold tracking-widest uppercase"
+          style={{ fontSize: 10, color: '#00B3DC' }}
+        >
+          {ev.location}
+        </span>
+      </div>
+
+      {/* Title */}
+      <h3 className="text-base sm:text-[17px] font-bold text-white mb-2 leading-snug">
+        {ev.title}
+      </h3>
+
+      {/* Desc */}
+      <p className="text-xs text-gray-400 leading-relaxed flex-1 mb-4">
+        {ev.desc}
+      </p>
+
+      {/* Footer row */}
+      <div className="flex items-center justify-between pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+        {/* Left: avatars / registered / time */}
+        <div className="flex items-center gap-1.5">
+          {ev.timeLabel ? (
+            <>
+              <Clock style={{ width: 12, height: 12, color: '#6b7280' }} />
+              <span className="text-xs text-gray-400">{ev.timeLabel}</span>
+            </>
+          ) : ev.registered ? (
+            <>
+              <Users style={{ width: 12, height: 12, color: '#6b7280' }} />
+              <span className="text-xs text-gray-400">{ev.registered}</span>
+            </>
+          ) : (
+            <div className="flex items-center gap-1">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="w-6 h-6 rounded-full border-2"
+                  style={{
+                    marginLeft: i > 0 ? '-7px' : 0,
+                    background: `linear-gradient(135deg, #3b82f6, #1d4ed8)`,
+                    borderColor: '#0d1e30',
+                  }}
+                />
+              ))}
+              <span className="text-xs text-gray-400 ml-1.5">+{ev.extra}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Right: action */}
+        {ev.actionType === 'button' ? (
+          <button
+            className="text-xs font-semibold px-4 py-2 rounded-lg transition-colors text-white hover:opacity-90"
+            style={{ background: '#1e3a5f' }}
+          >
+            {ev.action}
+          </button>
+        ) : (
+          <button
+            className="text-xs font-semibold flex items-center gap-1 transition-colors"
+            style={{ color: '#00B3DC' }}
+          >
+            {ev.action}
+            <ArrowRight style={{ width: 12, height: 12 }} />
+          </button>
+        )}
+      </div>
+    </div>
+  </div>
+);
+
+/* ─────────────────────────────────────────────────────────
+   MAIN PAGE
+   ───────────────────────────────────────────────────────── */
+const EventsPage = () => {
+  const [activeFilter, setActiveFilter] = useState('All Events');
+
+  const filtered = activeFilter === 'All Events'
+    ? events
+    : events.filter((e) => e.filter === activeFilter);
+
+  return (
+    <div className="min-h-screen font-sans" style={{ background: '#080f1a', color: 'white' }}>
+
+      <EventNavbar />
+
+      {/* ── Hero / Featured Event ── */}
+      <section
+        className="relative mx-3 sm:mx-6 lg:mx-8 mt-5 mb-10 rounded-2xl overflow-hidden"
+        style={{ minHeight: 340 }}
+      >
+        {/* BG image with gradient overlay */}
+        <div className="absolute inset-0">
+          <img
+            src={contoh1}
+            alt="Featured event"
+            className="w-full h-full object-cover"
+            style={{ filter: 'brightness(0.55) saturate(0.6)' }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(90deg, rgba(8,15,26,0.97) 0%, rgba(8,15,26,0.75) 50%, rgba(8,15,26,0.1) 100%)' }}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 px-8 sm:px-14 py-12 sm:py-16 flex flex-col justify-center" style={{ minHeight: 340 }}>
+          <span
+            className="inline-block mb-5 text-[10px] font-bold tracking-widest px-3 py-1.5 rounded-full w-fit"
+            style={{
+              color: '#00B3DC',
+              border: '1px solid rgba(0,179,220,0.4)',
+              background: 'rgba(0,179,220,0.1)',
+            }}
+          >
+            FEATURED WORKSHOP
+          </span>
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-5 leading-tight">
+            AI & Robotics:<br />
+            <span style={{ color: '#00B3DC' }}>The Future is Here</span>
+          </h1>
+
+          <p className="text-gray-300 text-sm sm:text-base max-w-lg mb-7 leading-relaxed">
+            Join us for an intensive 2-day workshop on neural networks and autonomous robotic systems.
+            Limited seats available for the 2024...
+          </p>
+
+          <div className="flex flex-wrap items-center gap-5">
+            <button
+              className="flex items-center gap-2 font-bold text-sm px-7 py-3 rounded-full transition-all hover:opacity-90"
+              style={{ background: '#1a5fa8', color: 'white', boxShadow: '0 0 20px rgba(0,98,155,0.5)' }}
+            >
+              Register Now <ArrowRight style={{ width: 16, height: 16 }} />
+            </button>
+            <div className="flex items-center gap-2 text-gray-300 text-sm">
+              <Calendar style={{ width: 16, height: 16, color: '#00B3DC' }} />
+              <span>Oct 24 - 25, 2024</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Filters + Sort ── */}
+      <div className="px-4 sm:px-6 lg:px-8 mb-8 flex flex-wrap items-center justify-between gap-4">
+        {/* Filter tabs */}
+        <div className="flex flex-wrap gap-2">
+          {FILTERS.map((f) => (
+            <button
+              key={f}
+              onClick={() => setActiveFilter(f)}
+              className="text-sm font-medium px-5 py-2 rounded-full transition-all duration-200"
+              style={
+                activeFilter === f
+                  ? { background: '#00629B', color: 'white', boxShadow: '0 0 16px rgba(0,98,155,0.5)' }
+                  : { background: 'transparent', color: '#9ca3af', border: '1px solid #1e3a5f' }
+              }
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+
+        {/* Sort */}
+        <button
+          className="flex items-center gap-2 text-sm px-4 py-2 rounded-full transition-colors"
+          style={{ color: '#9ca3af', border: '1px solid #1e3a5f' }}
+        >
+          <SlidersHorizontal style={{ width: 14, height: 14 }} />
+          Sort by: <span className="font-semibold text-white">Upcoming</span>
+        </button>
+      </div>
+
+      {/* ── Event Cards Grid ── */}
+      <div className="px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filtered.map((ev) => (
+            <EventCard key={ev.id} ev={ev} />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Load More ── */}
+      <div className="flex justify-center mb-20">
+        <button
+          className="flex items-center gap-2 text-sm font-medium px-12 py-3 rounded-full transition-all"
+          style={{
+            background: 'transparent',
+            color: '#d1d5db',
+            border: '1px solid #1e3a5f',
+          }}
+        >
+          Load More Events <ChevronDown style={{ width: 16, height: 16 }} />
+        </button>
+      </div>
+
+      {/* ── Footer ── */}
+      <footer style={{ borderTop: '1px solid #111e2e' }}>
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          {/* Brand */}
+          <div className="flex items-center gap-3">
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center"
+              style={{ background: '#00629B' }}
+            >
+              <img src={logo} alt="IEEE" className="w-5 h-5 object-contain" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-white">IEEE SB Telkom University</p>
+              <p className="text-xs text-gray-400">Advancing Technology for Humanity</p>
+            </div>
+          </div>
+
+          {/* Links */}
+          <div className="flex flex-wrap gap-6 text-sm text-gray-400">
+            <Link to="/"             className="hover:text-white transition-colors">Home</Link>
+            <Link to="/#about"       className="hover:text-white transition-colors">About</Link>
+            <a href="#"              className="hover:text-white transition-colors">Members</a>
+            <a href="#"              className="hover:text-white transition-colors">Contact</a>
+          </div>
+
+          {/* Social icons */}
+          <div className="flex gap-2">
+            {['↗', '✉'].map((icon, i) => (
+              <button
+                key={i}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition-colors text-sm"
+                style={{ border: '1px solid #1e3a5f' }}
+              >
+                {icon}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className="text-center py-4 tracking-widest uppercase"
+          style={{ fontSize: 10, color: '#374151', borderTop: '1px solid #0d1e2e' }}
+        >
+          © 2024 IEEE Student Branch Telkom University. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default EventsPage;
