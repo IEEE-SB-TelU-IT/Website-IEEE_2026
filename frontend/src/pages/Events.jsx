@@ -1,9 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Calendar, ArrowRight, ChevronDown, SlidersHorizontal, Clock, Users } from 'lucide-react';
 import logo from '../assets/image/logo.png';
 import contoh1 from '../assets/image/contoh1.png';
 import contoh2 from '../assets/image/contoh2.png';
+import { eventsApi } from '../services/apiService';
+
+// BE ngirim: { id, title, description, category, location, image_url }
+function mapEventFromApi(item, idx) {
+  return {
+    id: item.id,
+    status: 'OPEN', statusColor: '#22c55e',
+    tags: item.category ? [item.category] : [],
+    location: (item.location || 'TBA').toUpperCase(),
+    title: item.title,
+    desc: item.description,
+    avatars: 3, extra: 0,
+    action: 'Join Now', actionType: 'link',
+    img: item.image_url || (idx % 2 === 0 ? contoh1 : contoh2),
+    filter: item.category || 'All Events',
+  };
+}
 
 /* ─────────────────────────────────────────────────────────
    NAVBAR — 3 links only: About Us | News | Achievements
@@ -68,57 +85,6 @@ const EventNavbar = () => {
 /* ─────────────────────────────────────────────────────────
    DATA
    ───────────────────────────────────────────────────────── */
-const events = [
-  {
-    id: 1,
-    status: 'OPEN', statusColor: '#22c55e',
-    tags: ['Tech', 'Hands-on'],
-    location: 'LAB MULTIMEDIA',
-    title: 'Cybersecurity Essentials 101',
-    desc: 'Learn the fundamentals of penetration testing and ethical hacking from industry experts.',
-    avatars: 3, extra: 12,
-    action: 'Join Now', actionType: 'link',
-    img: contoh1,
-    filter: 'Workshops',
-  },
-  {
-    id: 2,
-    status: 'FULL', statusColor: '#ef4444',
-    tags: ['Seminar'],
-    location: 'VIRTUAL VIA ZOOM',
-    title: 'Cloud Architecture Summit',
-    desc: 'A deep dive into serverless architectures and distributed systems with AWS experts.',
-    registered: '250+ Registered',
-    action: 'Waitlist', actionType: 'button',
-    img: contoh2,
-    filter: 'Seminars',
-  },
-  {
-    id: 3,
-    status: 'OPEN', statusColor: '#22c55e',
-    tags: ['Competition'],
-    location: 'MAIN AUDITORIUM',
-    title: 'IoT Innovation Challenge',
-    desc: 'Present your innovative IoT solutions and win prizes up to Rp 10.000.000!',
-    avatars: 3, extra: 45,
-    action: 'Join Now', actionType: 'link',
-    img: contoh1,
-    filter: 'Competitions',
-  },
-  {
-    id: 4,
-    status: 'OPEN', statusColor: '#22c55e',
-    tags: [],
-    location: 'GKU BUILDING',
-    title: 'Python for Data Science',
-    desc: 'A beginner-friendly workshop focusing on Pandas, Numpy and Matplotlib for data visualization.',
-    timeLabel: 'Starts in 5 days',
-    action: 'Join Now', actionType: 'link',
-    img: contoh2,
-    filter: 'Workshops',
-  },
-];
-
 const FILTERS = ['All Events', 'Workshops', 'Seminars', 'Competitions', 'Hackathons'];
 
 /* ─────────────────────────────────────────────────────────
@@ -243,6 +209,28 @@ const EventCard = ({ ev }) => (
    ───────────────────────────────────────────────────────── */
 const EventsPage = () => {
   const [activeFilter, setActiveFilter] = useState('All Events');
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    eventsApi.getAll()
+      .then((res) => {
+        if (cancelled) return;
+        const list = Array.isArray(res.data) ? res.data : [];
+        setEvents(list.map(mapEventFromApi));
+        setError(null);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setError(err.message || 'Gagal ambil data event');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   const filtered = activeFilter === 'All Events'
     ? events
@@ -342,11 +330,18 @@ const EventsPage = () => {
 
       {/* ── Event Cards Grid ── */}
       <div className="px-4 sm:px-6 lg:px-8 mb-16">
+        {loading && <p className="text-gray-400 text-sm">Loading events...</p>}
+        {!loading && error && <p className="text-red-400 text-sm">Gagal ambil data: {error}</p>}
+        {!loading && !error && filtered.length === 0 && (
+          <p className="text-gray-400 text-sm">Belum ada event.</p>
+        )}
+        {!loading && !error && filtered.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((ev) => (
             <EventCard key={ev.id} ev={ev} />
           ))}
         </div>
+        )}
       </div>
 
       {/* ── Load More ── */}

@@ -1,10 +1,11 @@
-import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ArrowRight, Users, Briefcase, Megaphone, Code2, FlaskConical, TrendingUp, Handshake, Star, Lightbulb, Instagram, Linkedin, Music2 } from 'lucide-react';
+import { ChevronDown, ArrowRight, Users, Briefcase, Megaphone, Code2, FlaskConical, TrendingUp, Handshake, Star, Lightbulb, Instagram, Linkedin, Music2, User } from 'lucide-react';
 import PageNavbar from '../components/PageNavbar';
 import fotobersama from '../assets/image/fotobersama.png';
 import logo from '../assets/image/logo.png';
 import './Departments.css';
+import { departmentsApi, officersApi } from '../services/apiService';
 
 /* ─────────────────────────────────────────────
    FOOTER — sama persis dengan Footer di Home
@@ -48,140 +49,27 @@ const HomeFooter = () => (
 /* ─────────────────────────────────────────────
    DATA
    ───────────────────────────────────────────── */
-const departments = [
-  {
-    id: 'research', label: 'Research', icon: <FlaskConical className="w-4 h-4" />,
-    accentColor: '#7c3aed',
-    description: 'Focusing on reasoning which provides a forum for scientific development in the field of research and facilitates the potential achievements of all IEEE SB Telkom University officers.',
-    detail: 'Apart from that, there is Outlook Project Management which is tasked with supervising each research project and reporting the results of research project achievements on a short or long term scale.',
-    goals: [
-      { title: 'Harmonization', desc: 'Creating good relationships between IEEE Telkom University Student Branch officers while undergoing the specified work program.', icon: <Handshake className="w-5 h-5" /> },
-      { title: 'Synergy & Collaboration', desc: 'Carrying out work programs with other agencies that have new goals in developing the quality of each agency.', icon: <Users className="w-5 h-5" /> },
-      { title: 'Performance', desc: 'Become a center of excellence for the work of Telkom University students which is ready to be launched on an international scale.', icon: <TrendingUp className="w-5 h-5" /> },
-      { title: 'Innovation', desc: 'Creating new ideas from IEEE SB Telkom University members and officers to improve the quality of human resources IEEE SB Telkom University.', icon: <Lightbulb className="w-5 h-5" /> },
-    ],
-    directors: [
-      { name: 'Nama', position: 'Posisi', level: 0 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-    ],
-  },
-  {
-    id: 'education', label: 'Education', icon: <Star className="w-4 h-4" />,
-    accentColor: '#2563eb',
-    description: 'Responsible for developing the intellectual capacity of all IEEE SB Telkom members through workshops, seminars, and educational initiatives.',
-    detail: 'The Education department curates and delivers programs that align with IEEE global standards to foster a culture of continuous learning among student engineers.',
-    goals: [
-      { title: 'Knowledge Sharing', desc: 'Facilitate knowledge transfer between members and the broader student community.', icon: <Lightbulb className="w-5 h-5" /> },
-      { title: 'Skill Development', desc: 'Provide technical and soft-skill training to prepare members for professional roles.', icon: <Star className="w-5 h-5" /> },
-      { title: 'Collaboration', desc: 'Partner with faculty and industry experts to deliver impactful educational programs.', icon: <Handshake className="w-5 h-5" /> },
-      { title: 'Excellence', desc: 'Uphold high educational standards that reflect the values of IEEE globally.', icon: <TrendingUp className="w-5 h-5" /> },
-    ],
-    directors: [
-      { name: 'Nama', position: 'Posisi', level: 0 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-    ],
-  },
-  {
-    id: 'public_relation', label: 'Public Relation', icon: <Megaphone className="w-4 h-4" />,
-    accentColor: '#db2777',
-    description: "Handles external communications, social media management, sponsorships, and university connections to build IEEE SB Tel-U's public image.",
-    detail: 'The PR department bridges the gap between IEEE SB Tel-U and the wider community, including corporate partners, universities, and media outlets.',
-    goals: [
-      { title: 'Brand Awareness', desc: 'Increase the visibility and credibility of IEEE SB Tel-U across all platforms.', icon: <Megaphone className="w-5 h-5" /> },
-      { title: 'Partnership', desc: 'Establish mutually beneficial relationships with external organizations.', icon: <Handshake className="w-5 h-5" /> },
-      { title: 'Engagement', desc: 'Foster active engagement with the broader student and tech community.', icon: <Users className="w-5 h-5" /> },
-      { title: 'Impact', desc: "Create campaigns that meaningfully represent IEEE's mission and values.", icon: <TrendingUp className="w-5 h-5" /> },
-    ],
-    directors: [
-      { name: 'Nama', position: 'Posisi', level: 0 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-    ],
-  },
-  {
-    id: 'human_resource', label: 'Human Resource', icon: <Users className="w-4 h-4" />,
-    accentColor: '#059669',
-    description: 'Manages member recruitment, internal welfare, bonding activities, and develops the organizational capabilities of all IEEE SB Tel-U members.',
-    detail: 'Human Resources ensures every member thrives through structured onboarding, mentorship programs, and inclusive organizational culture initiatives.',
-    goals: [
-      { title: 'Recruitment', desc: 'Attract talented and passionate students to join the IEEE family.', icon: <Users className="w-5 h-5" /> },
-      { title: 'Retention', desc: 'Build loyalty through consistent engagement and recognition programs.', icon: <Star className="w-5 h-5" /> },
-      { title: 'Development', desc: 'Equip members with leadership and organizational skills for the future.', icon: <TrendingUp className="w-5 h-5" /> },
-      { title: 'Culture', desc: 'Foster a positive, inclusive, and collaborative working environment.', icon: <Handshake className="w-5 h-5" /> },
-    ],
-    directors: [
-      { name: 'Nama', position: 'Posisi', level: 0 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-    ],
-  },
-  {
-    id: 'creative', label: 'Creative & Information', icon: <Briefcase className="w-4 h-4" />,
-    accentColor: '#d97706',
-    description: 'Responsible for all visual design, creative content, documentation, and information management across IEEE SB Tel-U.',
-    detail: 'The Creative & Information department crafts compelling visual stories and manages the information ecosystem of the organization.',
-    goals: [
-      { title: 'Visual Identity', desc: 'Maintain a consistent and professional brand identity for IEEE SB Tel-U.', icon: <Star className="w-5 h-5" /> },
-      { title: 'Documentation', desc: 'Archive all organizational activities for institutional memory and transparency.', icon: <Briefcase className="w-5 h-5" /> },
-      { title: 'Content', desc: 'Produce high-quality creative content that resonates with our audience.', icon: <Lightbulb className="w-5 h-5" /> },
-      { title: 'Innovation', desc: 'Push creative boundaries to express the innovative spirit of IEEE.', icon: <TrendingUp className="w-5 h-5" /> },
-    ],
-    directors: [
-      { name: 'Nama', position: 'Posisi', level: 0 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-    ],
-  },
-  {
-    id: 'it', label: 'Information & Technology', icon: <Code2 className="w-4 h-4" />,
-    accentColor: '#0284c7',
-    description: 'Maintains the website, develops internal tools, manages digital infrastructure, and supports all technical needs of IEEE SB Telkom University.',
-    detail: 'The IT department leads digital transformation initiatives, builds technical capacity among members, and represents IEEE in national-level hackathons and competitions.',
-    goals: [
-      { title: 'Digital Infrastructure', desc: 'Maintain reliable and secure digital systems for the organization.', icon: <Code2 className="w-5 h-5" /> },
-      { title: 'Innovation', desc: 'Develop cutting-edge applications and tools that add value to the community.', icon: <Lightbulb className="w-5 h-5" /> },
-      { title: 'Collaboration', desc: 'Work with all departments to deliver technical solutions.', icon: <Handshake className="w-5 h-5" /> },
-      { title: 'Excellence', desc: 'Compete and excel in regional and national technology competitions.', icon: <TrendingUp className="w-5 h-5" /> },
-    ],
-    directors: [
-      { name: 'Nama', position: 'Posisi', level: 0 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 1 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-      { name: 'Nama', position: 'Posisi', level: 2 },
-    ],
-  },
+
+/* ─────────────────────────────────────────────
+   ICON LOOKUP — BE cuma simpen slug, icon ditentuin di FE
+   ───────────────────────────────────────────── */
+const DEPT_ICONS = {
+  rnd: <FlaskConical className="w-4 h-4" />,
+  education: <Star className="w-4 h-4" />,
+  pr: <Megaphone className="w-4 h-4" />,
+  hr: <Users className="w-4 h-4" />,
+  ci: <Briefcase className="w-4 h-4" />,
+  it: <Code2 className="w-4 h-4" />,
+};
+
+// goals dari BE cuma {title, desc} — icon dirotasi dari daftar ini
+const GOAL_ICONS = [
+  <Handshake className="w-5 h-5" />,
+  <Users className="w-5 h-5" />,
+  <TrendingUp className="w-5 h-5" />,
+  <Lightbulb className="w-5 h-5" />,
 ];
+
 
 /* ─────────────────────────────────────────────
    GOALS SECTION
@@ -209,7 +97,7 @@ const GoalsSection = ({ goals, accentColor }) => (
           <div key={i} className="relative bg-[#00172d]/60 border border-white/5 rounded-xl p-5 sm:p-7 hover:border-white/15 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl overflow-hidden">
             <SvgDecor idx={i} />
             <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white mb-4" style={{ background: `${accentColor}33`, border: `1px solid ${accentColor}55` }}>
-              {g.icon}
+              {GOAL_ICONS[i % GOAL_ICONS.length]}
             </div>
             <h4 className="text-sm sm:text-base font-bold text-white mb-2">{g.title}</h4>
             <p className="text-gray-400 text-xs leading-relaxed">{g.desc}</p>
@@ -239,7 +127,11 @@ const PersonCard = ({ person, accentColor, size }) => {
         className={`${cfg.img} rounded-lg overflow-hidden mb-2 flex items-center justify-center`}
         style={{ background: `${accentColor}22`, border: `1.5px solid ${accentColor}55` }}
       >
-        <img src={logo} alt={person.name} className="w-full h-full object-contain p-1 opacity-60" />
+        {person.photo_url ? (
+          <img src={person.photo_url} alt={person.name} className="w-full h-full object-cover" />
+        ) : (
+          <User className="w-1/2 h-1/2 opacity-60" style={{ color: accentColor }} />
+        )}
       </div>
       <p className={`${cfg.pos} font-semibold text-white text-center leading-tight`}>{person.position}</p>
       <p className={`${cfg.name} text-gray-400 text-center`}>{person.name}</p>
@@ -339,8 +231,61 @@ const DirectorsSection = ({ directors, accentColor, deptName }) => {
    MAIN PAGE
    ───────────────────────────────────────────── */
 const DepartmentsPage = () => {
-  const [activeId, setActiveId] = useState('research');
+  const [departments, setDepartments] = useState([]);
+  const [activeId, setActiveId] = useState(null);
+  const [officers, setOfficers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    departmentsApi.getAll()
+      .then((res) => {
+        if (cancelled) return;
+        const list = Array.isArray(res.data) ? res.data : [];
+        setDepartments(list);
+        if (list.length > 0) setActiveId(list[0].id);
+        setError(null);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setError(err.message || 'Gagal ambil data department');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!activeId) return;
+    let cancelled = false;
+    officersApi.getByDepartment(activeId)
+      .then((res) => {
+        if (!cancelled) setOfficers(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch(() => {
+        if (!cancelled) setOfficers([]);
+      });
+    return () => { cancelled = true; };
+  }, [activeId]);
+
   const active = departments.find(d => d.id === activeId);
+
+  if (loading) {
+    return (
+      <div className="w-full min-h-screen bg-[#000B18] text-white flex items-center justify-center">
+        <p className="text-gray-400 text-sm">Loading departments...</p>
+      </div>
+    );
+  }
+  if (error || !active) {
+    return (
+      <div className="w-full min-h-screen bg-[#000B18] text-white flex items-center justify-center">
+        <p className="text-red-400 text-sm">{error || 'Belum ada department.'}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen bg-[#000B18] text-white font-sans flex flex-col overflow-x-hidden">
@@ -442,13 +387,13 @@ const DepartmentsPage = () => {
       </section>
 
       {/* ── 5. GOALS (berdasarkan dept aktif) ── */}
-      <GoalsSection goals={active.goals} accentColor={active.accentColor} />
+      <GoalsSection goals={active.goals} accentColor={active.accent_color} />
 
       {/* ── 6. OUR DIRECTORS TEAM (berdasarkan dept aktif) ── */}
       <DirectorsSection
         key={activeId}
-        directors={active.directors}
-        accentColor={active.accentColor}
+        directors={officers}
+        accentColor={active.accent_color}
         deptName={active.label}
       />
 
@@ -469,7 +414,7 @@ const DepartmentsPage = () => {
                     : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-200'
                 }`}
               >
-                {d.icon}
+                {DEPT_ICONS[d.slug] || <Briefcase className="w-4 h-4" />}
                 {d.label}
               </button>
             ))}
@@ -479,11 +424,11 @@ const DepartmentsPage = () => {
           <div
             key={activeId}
             className="dept-card-enter relative bg-[#00172d]/80 border border-blue-900/40 rounded-2xl p-8 sm:p-10 text-left overflow-hidden"
-            style={{ boxShadow: `0 0 50px ${active.accentColor}18` }}
+            style={{ boxShadow: `0 0 50px ${active.accent_color}18` }}
           >
             <div
               className="absolute -top-24 -right-24 w-56 h-56 rounded-full blur-3xl opacity-20 pointer-events-none"
-              style={{ background: active.accentColor }}
+              style={{ background: active.accent_color }}
             />
             <div className="relative z-10">
               <h3 className="text-xl font-black text-white mb-4">{active.label}</h3>
@@ -492,7 +437,7 @@ const DepartmentsPage = () => {
               <Link to={`/departments/${active.id}`}>
                 <button
                   className="flex items-center gap-2 text-white text-sm font-semibold py-2 px-6 rounded-full border border-white/20 hover:bg-white hover:text-[#001220] transition-all duration-300"
-                  style={{ background: `${active.accentColor}33` }}
+                  style={{ background: `${active.accent_color}33` }}
                 >
                   See Detail <ArrowRight className="w-4 h-4" />
                 </button>

@@ -5,6 +5,8 @@ import EventsPage from './pages/Events';      // /news → Events page
 import Achievements from './pages/Achievements';
 import DepartmentsPage from './pages/Departments';
 import DepartmentDetail from './pages/DepartmentDetail';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/achievements"    element={<Achievements />}    />
         <Route path="/departments"     element={<DepartmentsPage />} />
         <Route path="/departments/:id" element={<DepartmentDetail />}/>
+        <Route path="/admin/login"     element={<AdminLogin />}      />
+        <Route path="/admin"           element={<AdminDashboard />}  />
       </Routes>
     </Router>
   );

@@ -1,12 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PageNavbar from '../components/PageNavbar';
 import PageFooter from '../components/PageFooter';
 import { Trophy, CheckCircle, ExternalLink, Download } from 'lucide-react';
 import contoh1 from '../assets/image/contoh1.png';
 import contoh2 from '../assets/image/contoh2.png';
 import fotobersama from '../assets/image/fotobersama.png'; // Will use as profile placeholders for now
+import { achievementsApi } from '../services/apiService';
 
 const Achievements = () => {
+  const [awards, setAwards] = useState([]);
+  const [awardsLoading, setAwardsLoading] = useState(true);
+  const [awardsError, setAwardsError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    achievementsApi.getAll()
+      .then((res) => {
+        if (cancelled) return;
+        const list = Array.isArray(res.data) ? res.data : [];
+        setAwards(list);
+        setAwardsError(null);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setAwardsError(err.message || 'Gagal ambil data achievement');
+      })
+      .finally(() => {
+        if (!cancelled) setAwardsLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
   const tabs = ['Awards', 'Technical Projects', 'Member Recognition'];
 
   return (
@@ -64,29 +87,25 @@ const Achievements = () => {
             </a>
           </div>
 
+          {awardsLoading && <p className="text-gray-400 text-sm">Loading achievements...</p>}
+          {!awardsLoading && awardsError && <p className="text-red-400 text-sm">Gagal ambil data: {awardsError}</p>}
+          {!awardsLoading && !awardsError && awards.length === 0 && (
+            <p className="text-gray-400 text-sm">Belum ada achievement.</p>
+          )}
+          {!awardsLoading && !awardsError && awards.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <AwardCard
-              year="2024"
-              title="Outstanding Student Branch"
-              desc="IEEE Region 10 (Asia Pacific) recognition for exceptional activities and student engagement."
-              org="IEEE R10 Council"
-              icon={<CheckCircle className="w-5 h-5 text-ocean-400" />}
-            />
-            <AwardCard
-              year="2023"
-              title="1st Place IoT Innovation"
-              desc="National Smart City Hackathon winner for AI-driven traffic management system."
-              org="Kemendikbud Ristek"
-              icon={<Download className="w-5 h-5 text-gray-500" />}
-            />
-            <AwardCard
-              year="2023"
-              title="Best Community Impact"
-              desc="IEEE Humanitarian Activities Committee recognition for 'Tech to Village' program."
-              org="IEEE HAC"
-              icon={<span className="w-6 h-6 rounded bg-ocean-900 flex items-center justify-center text-xs">👥</span>}
-            />
+            {awards.map((a) => (
+              <AwardCard
+                key={a.id}
+                year={a.created_at ? new Date(a.created_at).getFullYear() : ''}
+                title={a.title}
+                desc={a.description}
+                org={a.category || 'IEEE SB Tel-U'}
+                icon={<CheckCircle className="w-5 h-5 text-ocean-400" />}
+              />
+            ))}
           </div>
+          )}
         </div>
 
         <div className="mb-20">

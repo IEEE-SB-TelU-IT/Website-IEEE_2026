@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageNavbar from '../components/PageNavbar';
 import PageFooter from '../components/PageFooter';
 import { Calendar, Tag } from 'lucide-react';
 import contoh1 from '../assets/image/contoh1.png';
 import contoh2 from '../assets/image/contoh2.png';
+import { newsApi } from '../services/apiService';
 
-const allNews = [
-  { id: 1, type: 'TECHNOLOGY', title: 'Artificial Intelligence on Human Daily Life', desc: 'Explore how AI is fundamentally reshaping the way people live, work, and interact with the world around them in 2024.', date: 'Jan 10, 2024', img: contoh1 },
-  { id: 2, type: 'EVENT', title: 'IoT Innovation Challenge Winners Announced', desc: 'Our team secured top positions at the National IoT Innovation Challenge held in Jakarta with an award-winning smart city solution.', date: 'Jan 25, 2024', img: contoh2 },
-  { id: 3, type: 'AWARD', title: 'IEEE R10 Outstanding Student Branch Award', desc: 'IEEE SB Tel-U receives the prestigious Region 10 Outstanding Student Branch award for the second consecutive year.', date: 'Feb 05, 2024', img: contoh1 },
-  { id: 4, type: 'WORKSHOP', title: 'Workshop on Embedded Systems & FPGA Design', desc: 'A deep-dive hardware programming workshop attended by over 120 students from three different faculties at Telkom University.', date: 'Feb 18, 2024', img: contoh2 },
-  { id: 5, type: 'TECHNOLOGY', title: 'Machine Learning Study Group Kicks Off', desc: 'The newly formed ML Study Group begins its 12-week journey into deep learning, NLP, and computer vision applications.', date: 'Mar 01, 2024', img: contoh1 },
-  { id: 6, type: 'EVENT', title: 'IEEE SB Tel-U Hosts Regional Symposium', desc: 'Over 300 students and professionals gathered for a two-day regional symposium on future trends in electrical and computer engineering.', date: 'Mar 20, 2024', img: contoh2 },
-  { id: 7, type: 'AWARD', title: 'Best Paper Award at ICOIACT 2024', desc: 'Research on federated learning for privacy-preserving healthcare applications earns best paper recognition at an international conference.', date: 'Apr 08, 2024', img: contoh1 },
-  { id: 8, type: 'WORKSHOP', title: 'Cybersecurity Bootcamp: From Zero to Hero', desc: 'A weekend bootcamp covering ethical hacking, network security fundamentals, and practical CTF challenges for beginners.', date: 'Apr 22, 2024', img: contoh2 },
-];
+// BE ngirim: { id, title, content, category, image_url, created_at }
+function mapNewsFromApi(item, idx) {
+  return {
+    id: item.id,
+    type: (item.category || 'GENERAL').toUpperCase(),
+    title: item.title,
+    desc: item.content,
+    date: item.created_at
+      ? new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+      : '',
+    img: item.image_url || (idx % 2 === 0 ? contoh1 : contoh2),
+  };
+}
 
 const categories = ['All', 'TECHNOLOGY', 'EVENT', 'AWARD', 'WORKSHOP'];
 
@@ -27,6 +31,30 @@ const typeColor = {
 
 const News = () => {
   const [active, setActive] = useState('All');
+  const [allNews, setAllNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    newsApi.getAll()
+      .then((res) => {
+        if (cancelled) return;
+        const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+        setAllNews(list.map(mapNewsFromApi));
+        setError(null);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setError(err.message || 'Gagal ambil data news');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   const filtered = active === 'All' ? allNews : allNews.filter(n => n.type === active);
 
   return (
@@ -67,6 +95,16 @@ const News = () => {
         </div>
 
         {/* News Grid */}
+        {loading && (
+          <p className="text-gray-400 text-sm mb-20">Loading news...</p>
+        )}
+        {!loading && error && (
+          <p className="text-red-400 text-sm mb-20">Gagal ambil data: {error}</p>
+        )}
+        {!loading && !error && filtered.length === 0 && (
+          <p className="text-gray-400 text-sm mb-20">Belum ada news.</p>
+        )}
+        {!loading && !error && filtered.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
           {filtered.map((item) => (
             <div key={item.id} className="bg-[#1e293b]/60 rounded-2xl overflow-hidden border border-slate-700 hover:border-ocean-500/50 transition-all group flex flex-col cursor-pointer">
@@ -98,6 +136,7 @@ const News = () => {
             </div>
           ))}
         </div>
+        )}
 
         {/* Newsletter CTA */}
         <div className="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-slate-700/50 rounded-3xl p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
