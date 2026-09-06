@@ -140,14 +140,12 @@ const PersonCard = ({ person, accentColor, size }) => {
 };
 
 const DirectorsSection = ({ directors, accentColor, deptName }) => {
-  const head    = directors.filter(d => d.level === 0);
-  const mid     = directors.filter(d => d.level === 1);
-  const members = directors.filter(d => d.level === 2);
+  const head     = directors.filter(d => d.level === 0);
+  const officers = directors.filter(d => d.level !== 0);
 
   const containerRef = useRef(null);
-  const headRefs     = useRef([]);
-  const midRefs      = useRef([]);
-  const memberRefs   = useRef([]);
+  const headRefs      = useRef([]);
+  const officerRefs   = useRef([]);
   const [lines, setLines]     = useState([]);
   const [svgH, setSvgH]       = useState(0);
   const [svgW, setSvgW]       = useState(0);
@@ -164,24 +162,15 @@ const DirectorsSection = ({ directors, accentColor, deptName }) => {
       return { cx: r.left + r.width / 2 - cRect.left, top: r.top - cRect.top, bottom: r.bottom - cRect.top };
     };
     const newLines = [];
-    const headEls   = headRefs.current.filter(Boolean);
-    const midEls    = midRefs.current.slice(0, mid.length).filter(Boolean);
-    const memberEls = memberRefs.current.slice(0, members.length).filter(Boolean);
+    const headEls    = headRefs.current.filter(Boolean);
+    const officerEls = officerRefs.current.slice(0, officers.length).filter(Boolean);
 
-    if (headEls.length > 0 && midEls.length > 0) {
+    if (headEls.length > 0 && officerEls.length > 0) {
       const h = rel(headEls[0]);
-      const barY = h.bottom + (rel(midEls[0]).top - h.bottom) / 2;
+      const barY = h.bottom + (rel(officerEls[0]).top - h.bottom) / 2;
       newLines.push([h.cx, h.bottom, h.cx, barY]);
-      newLines.push([rel(midEls[0]).cx, barY, rel(midEls[midEls.length-1]).cx, barY]);
-      midEls.forEach(el => { const p = rel(el); newLines.push([p.cx, barY, p.cx, p.top]); });
-    }
-    if (midEls.length > 0 && memberEls.length > 0) {
-      const maxBot  = Math.max(...midEls.map(el => rel(el).bottom));
-      const midGrpCx = (rel(midEls[0]).cx + rel(midEls[midEls.length-1]).cx) / 2;
-      const barY = maxBot + (rel(memberEls[0]).top - maxBot) / 2;
-      newLines.push([midGrpCx, maxBot, midGrpCx, barY]);
-      newLines.push([rel(memberEls[0]).cx, barY, rel(memberEls[memberEls.length-1]).cx, barY]);
-      memberEls.forEach(el => { const p = rel(el); newLines.push([p.cx, barY, p.cx, p.top]); });
+      newLines.push([rel(officerEls[0]).cx, barY, rel(officerEls[officerEls.length-1]).cx, barY]);
+      officerEls.forEach(el => { const p = rel(el); newLines.push([p.cx, barY, p.cx, p.top]); });
     }
     setLines(newLines);
   };
@@ -203,20 +192,11 @@ const DirectorsSection = ({ directors, accentColor, deptName }) => {
               {head[0] && <PersonCard person={head[0]} accentColor={accentColor} size="lg" />}
             </div>
           </div>
-          {mid.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-16">
-              {mid.map((p, i) => (
-                <div key={i} ref={el => { midRefs.current[i] = el; }}>
+          {officers.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              {officers.map((p, i) => (
+                <div key={i} ref={el => { officerRefs.current[i] = el; }}>
                   <PersonCard person={p} accentColor={accentColor} size="md" />
-                </div>
-              ))}
-            </div>
-          )}
-          {members.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-              {members.map((p, i) => (
-                <div key={i} ref={el => { memberRefs.current[i] = el; }}>
-                  <PersonCard person={p} accentColor={accentColor} size="sm" />
                 </div>
               ))}
             </div>

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { departmentsApi } from '../services/apiService';
 
 // Import department images (used as faded watermark — very subtle like in design)
 import imgResearch from '../assets/image/departments/Research 1.png';
@@ -9,16 +10,15 @@ import imgIT       from '../assets/image/departments/IT 1.png';
 import imgEdu      from '../assets/image/departments/EDU (1) 1.png';
 import imgCI       from '../assets/image/departments/CI 1.png';
 
-const depts = [
-  { id: 'research',        title: 'Research',                 img: imgResearch },
-  { id: 'human_resource',  title: 'Human Resource',           img: imgHR       },
-  { id: 'public_relation', title: 'Public Relation',          img: imgPR       },
-  { id: 'it',              title: 'Information & Technology', img: imgIT       },
-  { id: 'education',       title: 'Education',                img: imgEdu      },
-  { id: 'creative',        title: 'Creative & Information',   img: imgCI       },
-];
-
-const DESC = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor inci...';
+// slug asli dari BE: rnd, education, pr, hr, ci, it
+const DEPT_IMAGES = {
+  rnd: imgResearch,
+  hr: imgHR,
+  pr: imgPR,
+  it: imgIT,
+  education: imgEdu,
+  ci: imgCI,
+};
 
 /* ── Department Card — matches Frame 48 exactly ── */
 const DeptCard = ({ dept }) => (
@@ -47,7 +47,7 @@ const DeptCard = ({ dept }) => (
       {/* ── Department image watermark ── */}
       <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none select-none">
         <img
-          src={dept.img}
+          src={DEPT_IMAGES[dept.slug]}
           alt=""
           aria-hidden="true"
           className="absolute bottom-[44px] right-0 w-[55%] h-[55%] object-contain object-right-bottom"
@@ -58,10 +58,12 @@ const DeptCard = ({ dept }) => (
       {/* ── Text content ── */}
       <div className="relative z-10 p-5 flex flex-col flex-1 pb-3">
         <h3 className="text-sm sm:text-[15px] font-bold text-white mb-3 pr-8 leading-snug">
-          {dept.title}
+          {dept.label}
         </h3>
         <p className="text-[12.5px] text-gray-300 leading-relaxed flex-1">
-          {DESC}
+          {dept.description && dept.description.length > 110
+            ? dept.description.slice(0, 110) + '...'
+            : dept.description}
         </p>
       </div>
 
@@ -88,7 +90,20 @@ const DeptCard = ({ dept }) => (
 
 /* ── Combined Departments + StudentBranch section ── */
 /* In the design these share the same dark background block */
-const DepartmentsSection = () => (
+const DepartmentsSection = () => {
+  const [depts, setDepts] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    departmentsApi.getAll()
+      .then((res) => {
+        if (!cancelled) setDepts(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  return (
   <section className="w-full" style={{ background: '#020d1a' }}>
     {/* Departments */}
     <div
@@ -148,12 +163,13 @@ const DepartmentsSection = () => (
               boxShadow: '0 0 16px rgba(0,98,155,0.4)',
             }}
           >
-            6 Departments
+            {depts.length} Departments
           </button>
         </div>
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default DepartmentsSection;
