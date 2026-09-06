@@ -477,9 +477,128 @@ const OfficersPanel = ({ departmentId }) => {
 };
 
 /* ─────────────────────────────────────────────
+   PANEL DEPARTMENT — edit description/detail/goals, cuma 1 record per department (gak ada create/delete)
+   ───────────────────────────────────────────── */
+const DepartmentPanel = ({ departmentId }) => {
+  const [dept, setDept] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [form, setForm] = useState({ label: '', description: '', detail: '', goals: [] });
+
+  const load = () => {
+    setLoading(true);
+    setSuccess(false);
+    departmentsApi.getById(departmentId)
+      .then((res) => {
+        const d = res.data;
+        setDept(d);
+        setForm({
+          label: d.label || '',
+          description: d.description || '',
+          detail: d.detail || '',
+          goals: Array.isArray(d.goals) ? d.goals : [],
+        });
+      })
+      .catch((err) => setError(err.message || 'Gagal ambil data department'))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, [departmentId]);
+
+  const handleGoalChange = (idx, key, value) => {
+    const updated = [...form.goals];
+    updated[idx] = { ...updated[idx], [key]: value };
+    setForm({ ...form, goals: updated });
+  };
+
+  const addGoal = () => setForm({ ...form, goals: [...form.goals, { title: '', desc: '' }] });
+  const removeGoal = (idx) => setForm({ ...form, goals: form.goals.filter((_, i) => i !== idx) });
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    setSuccess(false);
+    try {
+      await departmentsApi.update(departmentId, form);
+      setSuccess(true);
+      load();
+    } catch (err) {
+      setError(err.message || 'Gagal simpan');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (loading) return <p className="text-gray-400 text-sm">Loading...</p>;
+  if (!dept) return <p className="text-red-400 text-sm">Department tidak ditemukan.</p>;
+
+  return (
+    <div>
+      <h2 className="text-lg font-bold text-white mb-4">Department — {dept.label}</h2>
+
+      {error && <p className="text-red-400 text-xs mb-3 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">{error}</p>}
+      {success && <p className="text-green-400 text-xs mb-3 bg-green-500/10 border border-green-500/30 rounded-lg px-3 py-2">Tersimpan.</p>}
+
+      <form onSubmit={handleSave} className="bg-[#00172d] border border-white/10 rounded-xl p-4">
+        <div className="mb-3">
+          <label className="block text-xs text-gray-400 mb-1">Nama Department</label>
+          <input type="text" value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })}
+            className="w-full bg-[#000B18] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500" />
+        </div>
+        <div className="mb-3">
+          <label className="block text-xs text-gray-400 mb-1">What We Do — Deskripsi Singkat</label>
+          <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
+            className="w-full bg-[#000B18] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500" />
+        </div>
+        <div className="mb-4">
+          <label className="block text-xs text-gray-400 mb-1">What We Do — Detail Tambahan</label>
+          <textarea value={form.detail} onChange={(e) => setForm({ ...form, detail: e.target.value })} rows={3}
+            className="w-full bg-[#000B18] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500" />
+        </div>
+
+        <div className="mb-2 flex items-center justify-between">
+          <label className="block text-xs text-gray-400">Goals</label>
+          <button type="button" onClick={addGoal} className="text-xs font-semibold bg-white/10 hover:bg-white/20 text-white rounded-lg px-2.5 py-1">+ Tambah Goal</button>
+        </div>
+        {form.goals.length === 0 && <p className="text-gray-500 text-xs mb-3">Belum ada goal.</p>}
+        {form.goals.map((g, idx) => (
+          <div key={idx} className="bg-[#000B18] border border-white/10 rounded-lg p-3 mb-2">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-gray-500">Goal #{idx + 1}</span>
+              <button type="button" onClick={() => removeGoal(idx)} className="text-xs font-semibold text-red-400 hover:text-red-300">Hapus</button>
+            </div>
+            <input
+              type="text"
+              placeholder="Judul goal"
+              value={g.title || ''}
+              onChange={(e) => handleGoalChange(idx, 'title', e.target.value)}
+              className="w-full mb-2 bg-[#00172d] border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-blue-500"
+            />
+            <textarea
+              placeholder="Deskripsi goal"
+              value={g.desc || ''}
+              onChange={(e) => handleGoalChange(idx, 'desc', e.target.value)}
+              rows={2}
+              className="w-full bg-[#00172d] border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-blue-500"
+            />
+          </div>
+        ))}
+
+        <button type="submit" disabled={busy} className="mt-2 text-xs font-semibold bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg px-4 py-2">
+          Simpan Perubahan
+        </button>
+      </form>
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────
    DASHBOARD UTAMA
    ───────────────────────────────────────────── */
-const TABS = ['News', 'Achievements', 'Events', 'Programs', 'Officers'];
+const TABS = ['News', 'Achievements', 'Events', 'Programs', 'Officers', 'Department'];
 
 const AdminDashboardInner = ({ user }) => {
   const navigate = useNavigate();
@@ -537,7 +656,7 @@ const AdminDashboardInner = ({ user }) => {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Department switcher — superadmin doang */}
-        {user.is_superadmin && (tab === 'Programs' || tab === 'Officers') && (
+        {user.is_superadmin && (tab === 'Programs' || tab === 'Officers' || tab === 'Department') && (
           <div className="mb-6">
             <label className="block text-xs text-gray-400 mb-1">Pilih Department</label>
             <select
@@ -571,6 +690,7 @@ const AdminDashboardInner = ({ user }) => {
         {tab === 'Events' && <ContentPanel title="Events" api={eventsApi} fields={EVENT_FIELDS} />}
         {tab === 'Programs' && <ProgramsPanel departmentId={activeDeptId} />}
         {tab === 'Officers' && <OfficersPanel departmentId={activeDeptId} />}
+        {tab === 'Department' && <DepartmentPanel departmentId={activeDeptId} />}
       </div>
     </div>
   );
