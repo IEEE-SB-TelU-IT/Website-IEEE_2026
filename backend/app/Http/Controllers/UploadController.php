@@ -11,7 +11,7 @@ class UploadController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'file' => 'required|image|max:5120',
+            'file' => 'required|image|max:8192',
             'folder' => 'nullable|string|max:50',
         ]);
 
