@@ -17,6 +17,8 @@ WORKDIR /app
 
 COPY . .
 
+COPY uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+
 RUN composer install --no-dev --optimize-autoloader
 
 CMD php artisan serve --host=0.0.0.0 --port=$PORT
