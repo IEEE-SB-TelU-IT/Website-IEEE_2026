@@ -9,17 +9,24 @@ import {
 /* ─────────────────────────────────────────────
    FIELD UPLOAD GAMBAR — reusable, dipake di semua form
    ───────────────────────────────────────────── */
-const ImageUploadField = ({ label, value, onChange }) => {
+const ImageUploadField = ({
+  label,
+  value,
+  onChange,
+  folder = 'uploads',
+}) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleFile = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
     setUploading(true);
     setError(null);
+
     try {
-      const res = await uploadApi.upload(file);
+      const res = await uploadApi.upload(file, folder);
       onChange(res.url);
     } catch (err) {
       setError(err.message || 'Upload gagal');
@@ -30,10 +37,18 @@ const ImageUploadField = ({ label, value, onChange }) => {
 
   return (
     <div className="mb-3">
-      <label className="block text-xs text-gray-400 mb-1">{label}</label>
+      <label className="block text-xs text-gray-400 mb-1">
+        {label}
+      </label>
+
       {value && (
         <div className="flex items-center gap-3 mb-2">
-          <img src={value} alt="preview" className="w-20 h-20 object-cover rounded-lg border border-white/10" />
+          <img
+            src={value}
+            alt="preview"
+            className="w-20 h-20 object-cover rounded-lg border border-white/10"
+          />
+
           <button
             type="button"
             onClick={() => onChange('')}
@@ -43,6 +58,7 @@ const ImageUploadField = ({ label, value, onChange }) => {
           </button>
         </div>
       )}
+
       <input
         type="file"
         accept="image/*"
@@ -50,8 +66,18 @@ const ImageUploadField = ({ label, value, onChange }) => {
         disabled={uploading}
         className="w-full text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:text-xs file:font-semibold file:cursor-pointer hover:file:bg-blue-500"
       />
-      {uploading && <p className="text-xs text-blue-400 mt-1">Uploading...</p>}
-      {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+
+      {uploading && (
+        <p className="text-xs text-blue-400 mt-1">
+          Uploading...
+        </p>
+      )}
+
+      {error && (
+        <p className="text-xs text-red-400 mt-1">
+          {error}
+        </p>
+      )}
     </div>
   );
 };
@@ -60,7 +86,7 @@ const ImageUploadField = ({ label, value, onChange }) => {
    GENERIC PANEL — buat News / Achievements / Events
    (bukan department-scoped, punya draft/publish)
    ───────────────────────────────────────────── */
-const ContentPanel = ({ title, api, fields }) => {
+const ContentPanel = ({ title, api, fields, folder }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -159,11 +185,16 @@ const ContentPanel = ({ title, api, fields }) => {
         <form onSubmit={handleSave} className="bg-[#00172d] border border-white/10 rounded-xl p-4 mb-4">
           {fields.map((f) => (
             <div key={f.key} className="mb-3">
-              <label className="block text-xs text-gray-400 mb-1">{f.label}</label>
+              <label className="block text-xs text-gray-400 mb-1">
+                {f.label}
+              </label>
+
               {f.type === 'textarea' ? (
                 <textarea
                   value={form[f.key] || ''}
-                  onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, [f.key]: e.target.value })
+                  }
                   rows={3}
                   className="w-full bg-[#000B18] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
                 />
@@ -171,13 +202,18 @@ const ContentPanel = ({ title, api, fields }) => {
                 <ImageUploadField
                   label=""
                   value={form[f.key]}
-                  onChange={(url) => setForm({ ...form, [f.key]: url })}
+                  onChange={(url) =>
+                    setForm({ ...form, [f.key]: url })
+                  }
+                  folder={folder}
                 />
               ) : (
                 <input
                   type="text"
                   value={form[f.key] || ''}
-                  onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, [f.key]: e.target.value })
+                  }
                   className="w-full bg-[#000B18] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
                 />
               )}
@@ -309,7 +345,14 @@ const ProgramsPanel = ({ departmentId }) => {
                 <textarea value={form[f.key] || ''} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} rows={3}
                   className="w-full bg-[#000B18] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500" />
               ) : f.type === 'image' ? (
-                <ImageUploadField label="" value={form[f.key]} onChange={(url) => setForm({ ...form, [f.key]: url })} />
+                <ImageUploadField
+                  label=""
+                  value={form[f.key]}
+                  onChange={(url) =>
+                    setForm({ ...form, [f.key]: url })
+                  }
+                  folder="programs"
+                />
               ) : (
                 <input type="text" value={form[f.key] || ''} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
                   className="w-full bg-[#000B18] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500" />
@@ -428,7 +471,10 @@ const OfficersPanel = ({ departmentId }) => {
           <ImageUploadField
             label="Foto (opsional)"
             value={form.photo_url}
-            onChange={(url) => setForm({ ...form, photo_url: url })}
+            onChange={(url) =>
+              setForm({ ...form, photo_url: url })
+            }
+            folder="officers"
           />
           <div className="flex gap-2">
             <button type="submit" disabled={busy} className="text-xs font-semibold bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg px-3 py-1.5">Simpan</button>
@@ -685,11 +731,37 @@ const AdminDashboardInner = ({ user }) => {
           ))}
         </div>
 
-        {tab === 'News' && <ContentPanel title="News" api={newsApi} fields={NEWS_FIELDS} />}
-        {tab === 'Achievements' && <ContentPanel title="Achievements" api={achievementsApi} fields={ACHIEVEMENT_FIELDS} />}
-        {tab === 'Events' && <ContentPanel title="Events" api={eventsApi} fields={EVENT_FIELDS} />}
+        {tab === 'News' && (
+          <ContentPanel
+            title="News"
+            api={newsApi}
+            fields={NEWS_FIELDS}
+            folder="news"
+          />
+        )}
+
+        {tab === 'Achievements' && (
+          <ContentPanel
+            title="Achievements"
+            api={achievementsApi}
+            fields={ACHIEVEMENT_FIELDS}
+            folder="achievements"
+          />
+        )}
+
+        {tab === 'Events' && (
+          <ContentPanel
+            title="Events"
+            api={eventsApi}
+            fields={EVENT_FIELDS}
+            folder="events"
+          />
+        )}
+
         {tab === 'Programs' && <ProgramsPanel departmentId={activeDeptId} />}
+
         {tab === 'Officers' && <OfficersPanel departmentId={activeDeptId} />}
+
         {tab === 'Department' && <DepartmentPanel departmentId={activeDeptId} />}
       </div>
     </div>

@@ -127,28 +127,42 @@ export const authApi = {
   },
   me: () => apiFetch('/me'),
 };
-
 // ============================================================
-// UPLOAD API — multipart, JANGAN lewat apiFetch (beda Content-Type)
+// UPLOAD API — multipart/form-data
+// Jangan lewat apiFetch karena Content-Type harus dibuat browser
 // ============================================================
 export const uploadApi = {
-  upload: async (file) => {
-    const token = localStorage.getItem('auth_token');
+  upload: async (file, folder = 'uploads') => {
     const formData = new FormData();
+
     formData.append('file', file);
+    formData.append('folder', folder);
+
+    const token = localStorage.getItem('auth_token');
+
+    const headers = {
+      Accept: 'application/json',
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
 
     const response = await fetch(`${API_BASE}/upload`, {
       method: 'POST',
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers,
       body: formData,
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Upload gagal' }));
-      throw new Error(error.message || 'Upload gagal');
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Upload gagal' }));
+
+      throw new Error(error.message || `HTTP ${response.status}`);
     }
+
     return response.json();
   },
 };
-
 export default apiFetch;
