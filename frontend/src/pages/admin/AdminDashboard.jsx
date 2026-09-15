@@ -82,6 +82,38 @@ const ImageUploadField = ({
   );
 };
 
+// ─────────────────────────────────────────────
+// HELPER — ambil path Supabase dari public URL
+// contoh:
+// https://xxx.supabase.co/storage/v1/object/public/ieee-media/officers/abc.jpg
+// menjadi:
+// officers/abc.jpg
+// ─────────────────────────────────────────────
+const getStoragePath = (url) => {
+  if (!url) return null;
+
+  const marker = '/storage/v1/object/public/ieee-media/';
+  const index = url.indexOf(marker);
+
+  if (index === -1) return null;
+
+  return decodeURIComponent(
+    url.substring(index + marker.length)
+  );
+};
+
+const deleteStorageFile = async (url) => {
+  const path = getStoragePath(url);
+
+  if (!path) return;
+
+  try {
+    await uploadApi.delete(path);
+  } catch (err) {
+    console.error('Gagal hapus file Supabase:', err);
+  }
+};
+
 /* ─────────────────────────────────────────────
    GENERIC PANEL — buat News / Achievements / Events
    (bukan department-scoped, punya draft/publish)
@@ -120,12 +152,21 @@ const ContentPanel = ({ title, api, fields, folder }) => {
     e.preventDefault();
     setBusy(true);
     setError(null);
+
     try {
       if (editing.id) {
+        const oldImage = editing.image_url;
+
         await api.update(editing.id, form);
+
+        // DB sukses → kalau gambar berubah, hapus gambar lama
+        if (oldImage && oldImage !== form.image_url) {
+          await deleteStorageFile(oldImage);
+        }
       } else {
         await api.create(form);
       }
+
       setEditing(null);
       load();
     } catch (err) {
@@ -137,9 +178,22 @@ const ContentPanel = ({ title, api, fields, folder }) => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Yakin hapus?')) return;
+
     setBusy(true);
+    setError(null);
+
     try {
+      const item = items.find((x) => x.id === id);
+      const oldImage = item?.image_url;
+
+      // DB dulu
       await api.delete(id);
+
+      // DB sukses → Storage
+      if (oldImage) {
+        await deleteStorageFile(oldImage);
+      }
+
       load();
     } catch (err) {
       setError(err.message || 'Gagal hapus');
@@ -207,6 +261,7 @@ const ContentPanel = ({ title, api, fields, folder }) => {
                   }
                   folder={folder}
                 />
+
               ) : (
                 <input
                   type="text"
@@ -300,21 +355,53 @@ const ProgramsPanel = ({ departmentId }) => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    setBusy(true); setError(null);
+    setBusy(true);
+    setError(null);
+
     try {
-      if (editing.id) await programsApi.update(editing.id, form);
-      else await programsApi.create(departmentId, form);
-      setEditing(null); load();
-    } catch (err) { setError(err.message || 'Gagal simpan'); }
-    finally { setBusy(false); }
+      if (editing.id) {
+        const oldImage = editing.image_url;
+
+        await programsApi.update(editing.id, form);
+
+        if (oldImage && oldImage !== form.image_url) {
+          await deleteStorageFile(oldImage);
+        }
+      } else {
+        await programsApi.create(departmentId, form);
+      }
+
+      setEditing(null);
+      load();
+    } catch (err) {
+      setError(err.message || 'Gagal simpan');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Yakin hapus?')) return;
+
     setBusy(true);
-    try { await programsApi.delete(id); load(); }
-    catch (err) { setError(err.message || 'Gagal hapus'); }
-    finally { setBusy(false); }
+    setError(null);
+
+    try {
+      const item = items.find((x) => x.id === id);
+      const oldImage = item?.image_url;
+
+      await programsApi.delete(id);
+
+      if (oldImage) {
+        await deleteStorageFile(oldImage);
+      }
+
+      load();
+    } catch (err) {
+      setError(err.message || 'Gagal hapus');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handlePublish = async (item) => {
@@ -420,22 +507,61 @@ const OfficersPanel = ({ departmentId }) => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    setBusy(true); setError(null);
+    setBusy(true);
+    setError(null);
+
     try {
-      const payload = { ...form, level: Number(form.level) };
-      if (editing.id) await officersApi.update(editing.id, payload);
-      else await officersApi.create(departmentId, payload);
-      setEditing(null); load();
-    } catch (err) { setError(err.message || 'Gagal simpan'); }
-    finally { setBusy(false); }
+      const payload = {
+        ...form,
+        level: Number(form.level),
+      };
+
+      if (editing.id) {
+        const oldPhoto = editing.photo_url;
+
+        await officersApi.update(editing.id, payload);
+
+        // Foto diganti atau tombol Hapus Foto dipilih
+        if (oldPhoto && oldPhoto !== form.photo_url) {
+          await deleteStorageFile(oldPhoto);
+        }
+      } else {
+        await officersApi.create(departmentId, payload);
+      }
+
+      setEditing(null);
+      load();
+    } catch (err) {
+      setError(err.message || 'Gagal simpan');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Yakin hapus?')) return;
+
     setBusy(true);
-    try { await officersApi.delete(id); load(); }
-    catch (err) { setError(err.message || 'Gagal hapus'); }
-    finally { setBusy(false); }
+    setError(null);
+
+    try {
+      const item = items.find((x) => x.id === id);
+      const oldPhoto = item?.photo_url;
+
+      // Hapus record DB dulu
+      await officersApi.delete(id);
+
+      // DB sukses → hapus foto Storage
+      if (oldPhoto) {
+        await deleteStorageFile(oldPhoto);
+      }
+
+      load();
+    } catch (err) {
+      setError(err.message || 'Gagal hapus');
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (

@@ -18,7 +18,13 @@ class UploadController extends Controller
         $file = $request->file('file');
 
         $folder = $request->input('folder', 'uploads');
+
+        // Sanitasi nama folder
         $folder = preg_replace('/[^a-zA-Z0-9_-]/', '', $folder);
+
+        if (empty($folder)) {
+            $folder = 'uploads';
+        }
 
         $filename = Str::uuid() . '.' . strtolower(
             $file->getClientOriginalExtension()
@@ -68,5 +74,62 @@ class UploadController extends Controller
             'url' => $publicUrl,
             'path' => $path,
         ], 201);
+    }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'path' => 'required|string',
+        ]);
+
+        $path = $request->input('path');
+
+        // Cegah path tidak valid
+        if (
+            str_contains($path, '..') ||
+            str_starts_with($path, '/') ||
+            !preg_match('/^[a-zA-Z0-9_\-\/\.]+$/', $path)
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Path file tidak valid',
+            ], 422);
+        }
+
+        $supabaseUrl = rtrim(env('SUPABASE_URL'), '/');
+        $serviceRoleKey = env('SUPABASE_SERVICE_ROLE_KEY');
+        $bucket = env('SUPABASE_STORAGE_BUCKET', 'ieee-media');
+
+        if (!$supabaseUrl || !$serviceRoleKey) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Konfigurasi Supabase Storage belum lengkap',
+            ], 500);
+        }
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $serviceRoleKey,
+            'apikey' => $serviceRoleKey,
+            'Content-Type' => 'application/json',
+        ])->delete(
+            "{$supabaseUrl}/storage/v1/object/{$bucket}",
+            [
+                'prefixes' => [$path],
+            ]
+        );
+
+        if (!$response->successful()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus file dari Supabase',
+                'error' => $response->json(),
+            ], $response->status());
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'File berhasil dihapus dari Supabase',
+            'path' => $path,
+        ]);
     }
 }
